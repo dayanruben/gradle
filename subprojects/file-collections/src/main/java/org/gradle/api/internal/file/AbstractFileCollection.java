@@ -79,11 +79,12 @@ public abstract class AbstractFileCollection implements FileCollectionInternal {
      * This is final - override {@link #appendContents(TreeFormatter)}  instead.
      */
     @Override
-    public final void describeContents(TreeFormatter formatter) {
+    public final TreeFormatter describeContents(TreeFormatter formatter) {
         formatter.node("collection type: ").appendType(getClass()).append(" (id: ").append(String.valueOf(System.identityHashCode(this))).append(")");
         formatter.startChildren();
         appendContents(formatter);
         formatter.endChildren();
+        return formatter;
     }
 
     protected void appendContents(TreeFormatter formatter) {

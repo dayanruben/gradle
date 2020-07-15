@@ -145,19 +145,23 @@ public class DefaultConfigurableFileCollection extends CompositeFileCollection i
 
     @Override
     protected void appendContents(TreeFormatter formatter) {
-        formatter.node("display name: " + displayName);
-        formatter.node("contents");
-        formatter.startChildren();
+        if (displayName != null) {
+            formatter.node("display name: " + displayName);
+        }
         List<Object> paths = new ArrayList<>();
         value.collectSource(paths);
-        for (Object path : paths) {
-            if (path instanceof FileCollectionInternal) {
-                ((FileCollectionInternal) path).describeContents(formatter);
-            } else {
-                formatter.node(path.toString());
+        if (!paths.isEmpty()) {
+            formatter.node("contents");
+            formatter.startChildren();
+            for (Object path : paths) {
+                if (path instanceof FileCollectionInternal) {
+                    ((FileCollectionInternal) path).describeContents(formatter);
+                } else {
+                    formatter.node(path.toString());
+                }
             }
+            formatter.endChildren();
         }
-        formatter.endChildren();
     }
 
     @Override

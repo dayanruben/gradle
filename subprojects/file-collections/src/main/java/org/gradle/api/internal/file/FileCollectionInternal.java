@@ -49,7 +49,7 @@ public interface FileCollectionInternal extends FileCollection, TaskDependencyCo
     /**
      * Appends diagnostic information about the contents of this collection to the given formatter.
      */
-    void describeContents(TreeFormatter formatter);
+    TreeFormatter describeContents(TreeFormatter formatter);
 
     /**
      * Some representation of a source of files.
