@@ -62,9 +62,7 @@ public class JavaLanguagePluginServiceRegistry extends AbstractPluginServiceRegi
     @Override
     public void registerBuildTreeServices(ServiceRegistration registration) {
         registration.addProvider(new Object() {
-            public AnnotationProcessorDetector createAnnotationProcessorDetector(FileContentCacheFactory cacheFactory, LoggingConfiguration loggingConfiguration) {
-                return new AnnotationProcessorDetector(cacheFactory, LoggerFactory.getLogger(AnnotationProcessorDetector.class), loggingConfiguration.getShowStacktrace() != ShowStacktrace.INTERNAL_EXCEPTIONS);
-            }
+
         });
     }
 
@@ -86,6 +84,9 @@ public class JavaLanguagePluginServiceRegistry extends AbstractPluginServiceRegi
                 .registerArtifactType(JavadocArtifact.class, ArtifactType.JAVADOC);
         }
 
+        public AnnotationProcessorDetector createAnnotationProcessorDetector(FileContentCacheFactory cacheFactory, LoggingConfiguration loggingConfiguration) {
+            return new AnnotationProcessorDetector(cacheFactory, LoggerFactory.getLogger(AnnotationProcessorDetector.class), loggingConfiguration.getShowStacktrace() != ShowStacktrace.INTERNAL_EXCEPTIONS);
+        }
     }
 
     private static class JavaProjectScopeServices {

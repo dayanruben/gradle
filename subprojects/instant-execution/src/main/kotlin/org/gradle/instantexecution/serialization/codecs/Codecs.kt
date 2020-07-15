@@ -34,6 +34,7 @@ import org.gradle.api.internal.file.collections.DirectoryFileTreeFactory
 import org.gradle.api.internal.project.ProjectStateRegistry
 import org.gradle.api.internal.provider.PropertyFactory
 import org.gradle.api.internal.provider.ValueSourceProviderFactory
+import org.gradle.api.internal.tasks.compile.processing.AnnotationProcessorDetector
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.services.internal.BuildServiceRegistryInternal
@@ -186,6 +187,7 @@ class Codecs(
         bind(ownerServiceCodec<ListenerManager>())
         bind(ownerServiceCodec<TemporaryFileProvider>())
         bind(ownerServiceCodec<OutputChangeListener>())
+        bind(ownerServiceCodec<AnnotationProcessorDetector>())
         bind(ServicesCodec())
 
         bind(ProxyCodec)

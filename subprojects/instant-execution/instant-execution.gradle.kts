@@ -59,6 +59,7 @@ dependencies {
     implementation(project(":buildEvents"))
     implementation(project(":native"))
     implementation(project(":buildOption"))
+    implementation(project(":languageJava"))
 
     implementation(library("groovy"))
     implementation(library("slf4j_api"))
