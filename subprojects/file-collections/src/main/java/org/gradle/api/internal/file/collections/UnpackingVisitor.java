@@ -109,8 +109,9 @@ public class UnpackingVisitor {
     }
 
     private static class SingleFileResolvingFileCollection extends AbstractOpaqueFileCollection {
-        private final Object element;
+        private Object element;
         private final PathToFileResolver resolver;
+        private File resolved;
 
         public SingleFileResolvingFileCollection(Object element, PathToFileResolver resolver, Factory<PatternSet> patternSetFactory) {
             super(patternSetFactory);
@@ -125,7 +126,11 @@ public class UnpackingVisitor {
 
         @Override
         protected Set<File> getIntrinsicFiles() {
-            return ImmutableSet.of(resolver.resolve(element));
+            if (resolved == null) {
+                resolved = resolver.resolve(element);
+                element = null;
+            }
+            return ImmutableSet.of(resolved);
         }
     }
 
