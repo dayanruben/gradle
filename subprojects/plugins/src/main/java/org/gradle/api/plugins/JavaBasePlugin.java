@@ -96,22 +96,20 @@ public class JavaBasePlugin implements Plugin<ProjectInternal> {
         ArtifactTypeDefinition.DIRECTORY_TYPE
     );
 
-    private final ObjectFactory objectFactory;
     private final JavaInstallationRegistry javaInstallationRegistry;
-    private final JavaToolchainQueryService toolchainQueryService;
     private final boolean javaClasspathPackaging;
     private final JvmPluginServices jvmPluginServices;
 
     @Inject
-    public JavaBasePlugin(ObjectFactory objectFactory,
-                          JavaInstallationRegistry javaInstallationRegistry,
-                          JvmEcosystemUtilities jvmPluginServices,
-                          JavaToolchainQueryService toolchainQueryService) {
-        this.objectFactory = objectFactory;
+    public JavaBasePlugin(JavaInstallationRegistry javaInstallationRegistry, JvmEcosystemUtilities jvmPluginServices) {
         this.javaInstallationRegistry = javaInstallationRegistry;
-        this.toolchainQueryService = toolchainQueryService;
         this.javaClasspathPackaging = Boolean.getBoolean(COMPILE_CLASSPATH_PACKAGING_SYSTEM_PROPERTY);
         this.jvmPluginServices = (JvmPluginServices) jvmPluginServices;
+    }
+
+    @Inject
+    protected JavaToolchainQueryService getJavaToolchainQueryService() {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -136,7 +134,7 @@ public class JavaBasePlugin implements Plugin<ProjectInternal> {
         SourceSetContainer sourceSets = (SourceSetContainer) project.getExtensions().getByName("sourceSets");
         JavaPluginConvention javaConvention = new DefaultJavaPluginConvention(project, sourceSets);
         project.getConvention().getPlugins().put("java", javaConvention);
-        JavaPluginExtension extension = project.getExtensions().create(JavaPluginExtension.class, "java", DefaultJavaPluginExtension.class, javaConvention, project, jvmPluginServices);
+        project.getExtensions().create(JavaPluginExtension.class, "java", DefaultJavaPluginExtension.class, javaConvention, project, jvmPluginServices);
         project.getExtensions().add(JavaInstallationRegistry.class, "javaInstalls", javaInstallationRegistry);
         return javaConvention;
     }
@@ -154,7 +152,7 @@ public class JavaBasePlugin implements Plugin<ProjectInternal> {
 
             ConfigurationContainer configurations = project.getConfigurations();
 
-            defineConfigurationsForSourceSet(sourceSet, configurations, pluginConvention);
+            defineConfigurationsForSourceSet(sourceSet, configurations);
             definePathsForSourceSet(sourceSet, outputConventionMapping, project);
 
             createProcessResourcesTask(sourceSet, sourceSet.getResources(), project);
@@ -194,7 +192,7 @@ public class JavaBasePlugin implements Plugin<ProjectInternal> {
     }
 
     private Provider<JavaCompiler> toolchainCompiler(JavaToolchainSpec filter) {
-        return toolchainQueryService.findMatchingToolchain(filter).map(JavaToolchain::getJavaCompiler).getOrElse(Providers.notDefined());
+        return getJavaToolchainQueryService().findMatchingToolchain(filter).map(JavaToolchain::getJavaCompiler).getOrElse(Providers.notDefined());
     }
 
     private void createProcessResourcesTask(final SourceSet sourceSet, final SourceDirectorySet resourceSet, final Project target) {
@@ -227,7 +225,7 @@ public class JavaBasePlugin implements Plugin<ProjectInternal> {
         sourceSet.getResources().srcDir("src/" + sourceSet.getName() + "/resources");
     }
 
-    private void defineConfigurationsForSourceSet(SourceSet sourceSet, ConfigurationContainer configurations, final JavaPluginConvention convention) {
+    private void defineConfigurationsForSourceSet(SourceSet sourceSet, ConfigurationContainer configurations) {
         String compileConfigurationName = sourceSet.getCompileConfigurationName();
         String implementationConfigurationName = sourceSet.getImplementationConfigurationName();
         String runtimeConfigurationName = sourceSet.getRuntimeConfigurationName();
